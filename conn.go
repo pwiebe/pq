@@ -9,7 +9,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"github.com/lib/pq/oid"
+	"github.com/jagregory/pq/oid"
 	"io"
 	"net"
 	"os"
