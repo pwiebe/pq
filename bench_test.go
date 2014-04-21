@@ -7,7 +7,7 @@ import (
 	"bytes"
 	"database/sql"
 	"database/sql/driver"
-	"github.com/jagregory/pq/oid"
+	"github.com/pub-burrito/pq/oid"
 	"io"
 	"net"
 	"strconv"

@@ -3,7 +3,7 @@ package pq
 import (
 	"bytes"
 	"encoding/binary"
-	"github.com/jagregory/pq/oid"
+	"github.com/pub-burrito/pq/oid"
 )
 
 type readBuf []byte
