@@ -3,7 +3,7 @@ package pq
 import (
 	"fmt"
 	nurl "net/url"
-	"sort"
+	//"sort"
 	"strings"
 )
 
@@ -28,48 +28,63 @@ import (
 //	"postgres://"
 //
 // This will be blank, causing driver.Open to use all of the defaults
-func ParseURL(url string) (string, error) {
+
+func ParseURL2Map(url string) (map[string]string, error) {
+	m := make(map[string]string)
 	u, err := nurl.Parse(url)
 	if err != nil {
-		return "", err
+		return m, err
 	}
 
 	if u.Scheme != "postgres" {
-		return "", fmt.Errorf("invalid connection protocol: %s", u.Scheme)
+		return m, fmt.Errorf("invalid connection protocol: %s", u.Scheme)
 	}
 
+	if u.User != nil {
+		v := u.User.Username()
+		m["user"] = v
+
+		v, _ = u.User.Password()
+		m["password"] = v
+	}
+
+	i := strings.Index(u.Host, ":")
+	if i < 0 {
+		m["host"] = u.Host
+	} else {
+		m["host"] = u.Host[:i]
+		m["port"] = u.Host[i+1:]
+	}
+
+	if u.Path != "" {
+		m["dbname"] = u.Path[1:]
+	}
+
+	q := u.Query()
+	for k := range q {
+		m[k] = q.Get(k)
+	}
+
+	return m, err
+}
+
+func ParsedMap2String(config map[string]string) string {
 	var kvs []string
 	accrue := func(k, v string) {
 		if v != "" {
 			kvs = append(kvs, k+"="+v)
 		}
 	}
-
-	if u.User != nil {
-		v := u.User.Username()
-		accrue("user", v)
-
-		v, _ = u.User.Password()
-		accrue("password", v)
+	for k, v := range config {
+		accrue(k, v)
 	}
+	return strings.Join(kvs, " ")
+}
 
-	i := strings.Index(u.Host, ":")
-	if i < 0 {
-		accrue("host", u.Host)
-	} else {
-		accrue("host", u.Host[:i])
-		accrue("port", u.Host[i+1:])
+func ParseURL(url string) (string, error) {
+	m, err := ParseURL2Map(url)
+	if err != nil {
+		return "", err
 	}
-
-	if u.Path != "" {
-		accrue("dbname", u.Path[1:])
-	}
-
-	q := u.Query()
-	for k := range q {
-		accrue(k, q.Get(k))
-	}
-
-	sort.Strings(kvs) // Makes testing easier (not a performance concern)
-	return strings.Join(kvs, " "), nil
+	return ParsedMap2String(m), nil
 }
