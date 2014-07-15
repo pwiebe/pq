@@ -56,6 +56,7 @@ code still exists in here.
 * Brad Fitzpatrick (bradfitz)
 * Chris Walsh (cwds)
 * Daniel Farina (fdr)
+* Eric Chlebek (echlebek)
 * Everyone at The Go Team
 * Evan Shaw (edsrzf)
 * Ewan Chou (coocood)
@@ -70,6 +71,7 @@ code still exists in here.
 * Kelly Dunn (kellydunn)
 * Keith Rarick (kr)
 * Kir Shatrov (kirs)
+* Lann Martin (lann)
 * Maciek Sakrejda (deafbybeheading)
 * Marc Brinkmann (mbr)
 * Marko Tiikkaja (johto)

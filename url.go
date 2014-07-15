@@ -3,7 +3,6 @@ package pq
 import (
 	"fmt"
 	nurl "net/url"
-	//"sort"
 	"strings"
 )
 
@@ -40,29 +39,35 @@ func ParseURL2Map(url string) (map[string]string, error) {
 		return m, fmt.Errorf("invalid connection protocol: %s", u.Scheme)
 	}
 
+	escaper := strings.NewReplacer(` `, `\ `, `'`, `\'`, `\`, `\\`)
+	accrue := func(k, v string) {
+		if v != "" {
+			m[k] = escaper.Replace(v)
+		}
+	}
 	if u.User != nil {
 		v := u.User.Username()
-		m["user"] = v
+		accrue("user", v)
 
 		v, _ = u.User.Password()
-		m["password"] = v
+		accrue("password", v)
 	}
 
 	i := strings.Index(u.Host, ":")
 	if i < 0 {
-		m["host"] = u.Host
+		accrue("host", u.Host)
 	} else {
-		m["host"] = u.Host[:i]
-		m["port"] = u.Host[i+1:]
+		accrue("host", u.Host[:i])
+		accrue("port", u.Host[i+1:])
 	}
 
 	if u.Path != "" {
-		m["dbname"] = u.Path[1:]
+		accrue("dbname", u.Path[1:])
 	}
 
 	q := u.Query()
 	for k := range q {
-		m[k] = q.Get(k)
+		accrue(k, q.Get(k))
 	}
 
 	return m, err
