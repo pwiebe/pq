@@ -9,7 +9,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"github.com/pub-burrito/pq/oid"
+	"github.com/pwiebe/pq/oid"
 	"io"
 	"net"
 	"os"
